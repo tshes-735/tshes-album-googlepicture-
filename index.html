@@ -16,51 +16,12 @@
       user-select: none;
       font-family: 'Noto Sans TC', 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    input, textarea, select { user-select: text; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
-  <script>
-    (function() {
-      try {
-        var canvas = document.createElement('canvas');
-        canvas.width = 180;
-        canvas.height = 180;
-        var ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#0F172A';
-        ctx.fillRect(0, 0, 180, 180);
-        ctx.strokeStyle = '#38BDF8';
-        ctx.lineWidth = 10;
-        ctx.strokeRect(36, 52, 108, 76);
-        ctx.beginPath();
-        ctx.arc(90, 90, 22, 0, Math.PI * 2);
-        ctx.stroke();
-        var iconUrl = canvas.toDataURL('image/png');
-        var appleIcon = document.createElement('link');
-        appleIcon.rel = 'apple-touch-icon';
-        appleIcon.href = iconUrl;
-        document.head.appendChild(appleIcon);
-        var manifest = {
-          name: '東新國小活動相簿',
-          short_name: '活動相簿',
-          start_url: '.',
-          display: 'standalone',
-          background_color: '#F8FAFC',
-          theme_color: '#0F172A',
-          icons: [{ src: iconUrl, sizes: '180x180', type: 'image/png' }]
-        };
-        var manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
-        document.head.appendChild(manifestLink);
-      } catch (e) {}
-    })();
-  </script>
 </head>
 <body class="h-screen flex flex-col overflow-hidden bg-slate-50">
   <div id="app" v-cloak class="h-screen flex flex-col max-w-6xl w-full mx-auto bg-white sm:my-2 sm:h-[calc(100vh-1rem)] sm:rounded-2xl sm:border sm:border-slate-200 sm:shadow-sm overflow-hidden">
     
-    <!-- 頂部固定 Header（還原截圖深海藍質感 + 35mm SHUTTER 標籤） -->
+    <!-- 頂部固定 Header（純淨唯讀版，已移除設定按鈕） -->
     <header class="bg-[#0F172A] text-white px-4 py-3 flex items-center justify-between shrink-0">
       <div class="flex items-center gap-2.5">
         <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-sky-400">
@@ -75,16 +36,10 @@
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
-        <span class="hidden sm:inline-block font-mono text-xs tracking-widest px-2.5 py-1 rounded border border-slate-600 bg-slate-800/80 text-slate-300">
+      <div class="flex items-center">
+        <span class="font-mono text-xs tracking-widest px-2.5 py-1 rounded border border-slate-600 bg-slate-800/80 text-slate-300">
           35mm SHUTTER
         </span>
-        <button @click="state.showSettings = true" title="相簿同步與備份設定" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-        </button>
       </div>
     </header>
 
@@ -97,7 +52,7 @@
           <span v-if="state.isPlaying">❚❚ 輪播中</span>
           <span v-else>▶ 已暫停</span>
         </button>
-        <span v-if="loading" class="text-xs text-sky-600 font-medium animate-pulse">正在同步雲端最新相簿...</span>
+        <span v-if="loading" class="text-xs text-sky-600 font-medium animate-pulse">正在同步最新活動相簿...</span>
       </div>
 
       <!-- 3 欄式 4:3 相簿卡片網格 -->
@@ -125,12 +80,9 @@
         </a>
       </div>
 
-      <!-- 空狀態提示 -->
-      <div v-else class="flex-1 flex flex-col items-center justify-center text-center py-8 text-slate-500">
-        <p class="text-sm font-medium mb-2">目前尚未讀取到雲端相簿資料</p>
-        <button @click="state.showSettings = true" class="px-3.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700">
-          點此貼上 Google Apps Script 網址
-        </button>
+      <!-- 載入中/空狀態提示 -->
+      <div v-else class="flex-1 flex flex-col items-center justify-center text-center py-8 text-slate-400">
+        <p class="text-sm font-medium">{{ loading ? '正在讀取雲端相簿，請稍候...' : '目前尚無公開活動相簿' }}</p>
       </div>
 
       <!-- 底部：分頁圓點 + 更多活動相簿按鈕 -->
@@ -155,55 +107,13 @@
       </div>
     </main>
 
-    <!-- 管理與備份設定彈窗 (點擊右上角齒輪開啟) -->
-    <div v-if="state.showSettings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-          <h3 class="text-base font-bold text-slate-900">雲端同步與備份管理</h3>
-          <button @click="state.showSettings = false" class="text-slate-400 hover:text-slate-700 text-lg font-bold px-2">✕</button>
-        </div>
-
-        <form @submit.prevent="saveAndSync" class="mt-4 space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Google Apps Script 網頁應用程式網址</label>
-            <input v-model.trim="state.gasUrl" type="url" placeholder="https://script.google.com/macros/s/..."
-                   class="w-full text-base px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-sky-600" />
-            <p class="text-xs text-slate-500 mt-1">部署 GAS 後貼上網址，系統將自動依每年 8 月切換學年度相簿。</p>
-          </div>
-
-          <div class="flex gap-2">
-            <button type="submit" class="flex-1 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold shadow-sm">
-              儲存並立即同步雲端
-            </button>
-          </div>
-        </form>
-
-        <!-- 本地備份與還原區塊 -->
-        <div class="mt-5 pt-4 border-t border-slate-100">
-          <p class="text-xs font-bold text-slate-700 mb-2">設定與快取資料安全備份 (JSON)</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" @click="exportBackup" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">
-              ⬇ 匯出備份檔
-            </button>
-            <label class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center cursor-pointer">
-              ⬆ 還原備份檔
-              <input type="file" accept=".json" @change="importBackup" class="hidden" />
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 懸浮 Toast 提示 -->
-    <div v-if="toast.visible" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-slate-900 text-white text-xs font-medium shadow-lg transition-opacity">
-      {{ toast.message }}
-    </div>
-
   </div>
 
   <script>
     const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
-    const STORAGE_KEY = 'tshes_album_widget_v1';
+    const STORAGE_KEY = 'tshes_album_cache_v2';
+    // 已直接寫死綁定東新國小專屬 Google Apps Script 網址
+    const FIXED_GAS_URL = 'https://script.google.com/macros/s/AKfycbyTcL4PNzxz6WP7Sid4tim_s-bLmaJthymNE5voYzs6hbnhjb1IYDSUm0sWWMFOwitQLg/exec';
 
     createApp({
       setup() {
@@ -211,20 +121,10 @@
         const currentPage = ref(0);
         let timer = null;
 
-        const toast = reactive({ visible: false, message: '' });
-        const showToast = (msg) => {
-          toast.message = msg;
-          toast.visible = true;
-          setTimeout(() => { toast.visible = false; }, 3000);
-        };
-
-        // 預設帶入你提供的 115 學年度相簿連結與範例
         const defaultState = {
-          gasUrl: '',
           academicYear: new Date().getMonth() + 1 >= 8 ? new Date().getFullYear() - 1911 : new Date().getFullYear() - 1912,
           yearFolderUrl: 'https://drive.google.com/drive/folders/1FsI1tT8nhs0li6AQSYzmidMr3IOMQOdt?usp=drive_link',
           isPlaying: true,
-          showSettings: false,
           albums: []
         };
 
@@ -233,7 +133,7 @@
             const raw = localStorage.getItem(STORAGE_KEY);
             if (raw) {
               const parsed = JSON.parse(raw);
-              return Object.assign({}, defaultState, parsed, { showSettings: false });
+              return Object.assign({}, defaultState, parsed);
             }
           } catch (e) {}
           return Object.assign({}, defaultState);
@@ -241,22 +141,14 @@
 
         const state = reactive(loadState());
 
-        // 支援網址參數 ?api=GAS網址 直接免設定載入
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('api')) {
-          state.gasUrl = urlParams.get('api');
-        }
-
         watch(state, (val) => {
           try {
-            const toSave = {
-              gasUrl: val.gasUrl,
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
               academicYear: val.academicYear,
               yearFolderUrl: val.yearFolderUrl,
               isPlaying: val.isPlaying,
               albums: val.albums
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+            }));
           } catch (e) {}
         }, { deep: true });
 
@@ -267,31 +159,21 @@
           return state.albums.slice(start, start + pageSize);
         });
 
-        const fetchAlbums = async (manual = false) => {
-          if (!state.gasUrl) return;
+        const fetchAlbums = async () => {
           loading.value = true;
           try {
-            const res = await fetch(state.gasUrl);
+            const res = await fetch(FIXED_GAS_URL);
             const data = await res.json();
             if (data.status === 'ok' && Array.isArray(data.albums)) {
               state.academicYear = data.academicYear || state.academicYear;
               state.yearFolderUrl = data.yearFolderUrl || state.yearFolderUrl;
               state.albums = data.albums;
               currentPage.value = 0;
-              if (manual) showToast('已成功同步 ' + state.academicYear + ' 學年度共 ' + data.albums.length + ' 本相簿');
-            } else if (manual) {
-              showToast('同步異常：' + (data.message || '請確認資料夾權限'));
             }
           } catch (err) {
-            if (manual) showToast('連線失敗，請檢查 GAS 部署權限是否設為「所有人」');
           } finally {
             loading.value = false;
           }
-        };
-
-        const saveAndSync = () => {
-          state.showSettings = false;
-          fetchAlbums(true);
         };
 
         const handleImgError = (event, album) => {
@@ -317,7 +199,6 @@
 
         const toggleAutoplay = () => {
           state.isPlaying = !state.isPlaying;
-          showToast(state.isPlaying ? '已開啟自動輪播' : '已暫停輪播');
         };
 
         const goToPage = (idx) => {
@@ -325,61 +206,20 @@
           startAutoplay();
         };
 
-        const exportBackup = () => {
-          try {
-            const dateStr = new Date().toISOString().slice(0, 10);
-            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '東新國小相簿設定備份_' + dateStr + '.json';
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('備份檔已匯出');
-          } catch (e) {
-            showToast('匯出失敗');
-          }
-        };
-
-        const importBackup = (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            try {
-              const data = JSON.parse(ev.target.result);
-              if (data.gasUrl !== undefined) state.gasUrl = data.gasUrl;
-              if (Array.isArray(data.albums)) state.albums = data.albums;
-              if (data.yearFolderUrl) state.yearFolderUrl = data.yearFolderUrl;
-              showToast('備份已成功還原');
-              if (state.gasUrl) fetchAlbums(false);
-            } catch (err) {
-              showToast('備份檔格式錯誤');
-            }
-          };
-          reader.readAsText(file);
-        };
-
         onMounted(() => {
           startAutoplay();
-          if (state.gasUrl) {
-            fetchAlbums(false);
-          }
+          fetchAlbums();
         });
 
         return {
           state,
           loading,
-          toast,
           currentPage,
           totalPages,
           visibleAlbums,
-          saveAndSync,
           handleImgError,
           toggleAutoplay,
-          goToPage,
-          exportBackup,
-          importBackup
+          goToPage
         };
       }
     }).mount('#app');
